@@ -1,3 +1,7 @@
+use crate::ast::Ast;
+use crate::ast::lexer::Lexer;
+use crate::ast::parser::Parser;
+
 mod ast;
 
 fn main() {
@@ -9,4 +13,12 @@ fn main() {
         tokens.push(token);
     }
     println!("{:?}", tokens);
+    let mut ast = Ast::new();
+    let mut parser = Parser::from_tokens(
+        tokens
+    );
+    while let Some(stmt) = parser.next_statement() {
+        ast.add_statement(stmt);
+    }
+    ast.visualize();
 }
