@@ -76,8 +76,8 @@ impl ASTVisitor for ASTPrinter {
 }
 
 impl ASTPrinter {
-    fn print_with_indent(&mut self, indent: usize, text: &str) {
-        println!("{}{}", " ".repeat(indent), text);
+    fn print_with_indent(&mut self, text: &str) {
+        println!("{}{}", " ".repeat(self.indent), text);
     }
 }
 
@@ -99,12 +99,12 @@ impl ASTStatement {
     }
 }
 
-pub enum ASTExepressionKind {
+pub enum ASTExpressionKind {
     Number(i64),
 }
 
 pub struct ASTExpression {
-    kind: ASTExepressionKind,
+    kind: ASTExpressionKind,
 }
 
 pub struct ASTNumberExpression {
@@ -112,11 +112,11 @@ pub struct ASTNumberExpression {
 }
 
 impl ASTExpression {
-    pub fn new(kind: ASTExepressionKind) -> Self {
+    pub fn new(kind: ASTExpressionKind) -> Self {
         ASTExpression { kind }
     }
 
     pub fn number(number: i64) -> Self {
-        ASTExpression::new(ASTExepressionKind::Number(number))
+        ASTExpression::new(ASTExpressionKind::Number(number))
     }
 }
