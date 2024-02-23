@@ -1,8 +1,6 @@
 use crate::ast::{ASTBinaryOperator, ASTBinaryOperatorKind, ASTStatement, ASTExpression};
 use crate::ast::lexer::{Lexer, Token, TokenKind};
 
-use super::ASTExpression;
-
 pub struct Parser {
     tokens: Vec<Token>,
     current: usize,
@@ -11,16 +9,7 @@ pub struct Parser {
 impl Parser {
 
     pub fn new(tokens: Vec<Token>) -> Self {
-        Self { tokens: tokens.iter().filter(|token| token.kind != TokenKind::Whitespace).map(|token| token.clone()).collect(), current: 0}
-    }
-
-    pub fn from_input(input: &str) -> Self {
-        let mut lexer = Lexer::new(input);
-        let mut tokens = Vec::new();
-        while let Some(token) = lexer.next_token() {
-            tokens.push(token);
-        }
-        Self { tokens, current }
+        Self { tokens: tokens.iter().filter(|token| token.kind != TokenKind::Whitespace).map(|token| token.clone()).collect(), current: 0, }
     }
 
     pub fn next_statement(&mut self) -> Option<ASTStatement> {
@@ -41,9 +30,9 @@ impl Parser {
     }
 
     fn parse_binary_expression(&mut self, precedence: u8) -> Option<ASTExpression> {
-        let mut left = self.parse_pramary_expression()?;
+        let mut left = self.parse_primary_expression()?;
 
-        while let Some(operator) == self.parse_binary_operator() {
+        while let Some(operator) = self.parse_binary_operator() {
             self.consume();
             let operator_precedence = operator.precedence();
             if operator_precedence < precedence {
@@ -78,8 +67,32 @@ impl Parser {
         return kind.map(|kind| ASTBinaryOperator::new(kind, token.clone()));
     }
 
-    fn peek(&self, offset: usize) -> Option<&Token> {
-        self.tokens.get(self.current as isize + offset) as usize
+    fn parse_primary_expression(&mut self) -> Option<ASTExpression> {
+        let token = self.consume()?;
+        return match token.kind {
+            TokenKind::Number(number) => {
+                Some(ASTExpression::number(number))
+            }
+            TokenKind::LeftParen => {
+                let expr = self.parse_expression()?;
+                let token = self.consume()?;
+                if token.kind != TokenKind::RightParen {
+                    panic!("Expected right paren");
+                }
+                Some(
+                     ASTExpression::parenthesized(
+                        expr
+                    )   
+                )
+            }
+            _ => {
+                None
+            }
+        };
+    } 
+
+    fn peek(&self, offset: isize) -> Option<&Token> {
+        self.tokens.get((self.current as isize + offset) as usize)
     }
 
     fn current(&self) -> Option<&Token> {

@@ -6,7 +6,7 @@ use crate::ast::parser::Parser;
 mod ast;
 
 fn main() {
-    let input : &str = "7 - (30 + 7) * 8 / 2";
+    let input = "7 - (30 + 7) * 8 / 2";
 
     let mut lexer = Lexer::new(input);
     let mut tokens = Vec::new();
@@ -14,7 +14,7 @@ fn main() {
         tokens.push(token);
     }
     println!("{:?}", tokens);
-    let mut ast = Ast::new();
+    let mut ast: Ast = Ast::new();
     let mut parser = Parser::new(
         tokens
     );
@@ -22,7 +22,7 @@ fn main() {
         ast.add_statement(stmt);
     }
     ast.visualize();
-    let mut eval = ASTEvalutor::new();
+    let mut eval = ASTEvaluator::new();
     ast.visit(&mut eval);
     println!("Result: {:?}", eval.last_value);
 }

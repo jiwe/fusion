@@ -1,4 +1,4 @@
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum TokenKind {
     Number(i64),
     Plus,
@@ -12,11 +12,11 @@ pub enum TokenKind {
     Eof,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct TextSpan {
-    start: usize,
-    end: usize,
-    literal: String,
+    pub(crate) start: usize,
+    pub(crate) end: usize,
+    pub(crate) literal: String,
 }
 
 impl TextSpan {
@@ -29,10 +29,10 @@ impl TextSpan {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct Token {
-    kind: TokenKind,
-    span: TextSpan,
+    pub(crate) kind: TokenKind,
+    pub(crate) span: TextSpan,
 }
 
 impl Token {
@@ -46,7 +46,7 @@ pub struct Lexer<'a> {
     current_pos: usize,
 }
 
-impl <'a> Lexer<'a> {
+impl<'a> Lexer<'a> {
     
     pub fn new(input : &'a str) -> Self {
         Self { input, current_pos: 0 }
@@ -97,7 +97,6 @@ impl <'a> Lexer<'a> {
             _ => TokenKind::Bad,
         }
     }
-        
 
     fn is_number_start(c: &char) -> bool {
         c.is_digit(10)
